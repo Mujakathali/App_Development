@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 
@@ -50,7 +49,7 @@ const Report = () => {
            <Select options={options} />
          </div>
          <div className="form-group">
-           <label>Address</label>
+           <label>Hall No</label>
            <Select options={options} />
          </div>
          <div className="form-group">

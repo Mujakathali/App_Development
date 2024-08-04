@@ -11,6 +11,7 @@ import UserPage from './components/UserPage';
 import Report from './components/Report';
 
 import HallsTable from './components/HallsTable';
+import User2 from './components/userpage/User2';
 
 const theme = createTheme({
   palette: {
@@ -94,7 +95,7 @@ const App = () => {
                     </Grid>
                   </Grid>
                 } />
-                <Route path="/users" element={<UserPage />} />
+                <Route path="/users" element={<User2/>} />
                 <Route path="/report" element={<Report />} />
                 <Route path="/halls" element={< HallsTable/>} />
               </Routes>

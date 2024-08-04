@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography, Chip, Button, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Input } from '@mui/material';
-
+import imagess from './shrek-close-up-face-desktop-wallpaper-4k.jpg';
 const initialHalls = [
-  { image: 'image-url-1', hall: '001', capacity: 'Fits up to 200 guests', price: '₹25000.00', availability: 'Not Available' },
+  { image:imagess, hall: '001', capacity: 'Fits up to 200 guests', price: '₹25000.00', availability: 'Not Available' },
   { image: 'image-url-2', hall: '002', capacity: 'Fits up to 700 guests', price: '₹35000.00', availability: 'Available' },
   { image: 'image-url-3', hall: '003', capacity: 'Fits up to 500 guests', price: '₹30000.00', availability: 'Not Available' },
   { image: 'image-url-4', hall: '004', capacity: 'Fits up to 1200 guests', price: '₹50000.00', availability: 'Not Available' },
@@ -122,8 +122,8 @@ const HallsTable = () => {
                   <Chip
                     label={hall.availability}
                     style={{
-                      backgroundColor: hall.availability === 'Available' ? 'green' : 'red',
-                      color: 'white'
+                      backgroundColor: hall.availability === 'Available' ? '#d4edda' : '#f8d7da',
+                      color: hall.availability==='Available'?'#155724':'#721c24'
                     }}
                   />
                 </TableCell>
