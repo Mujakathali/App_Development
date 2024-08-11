@@ -1,0 +1,128 @@
+/* Register.css */
+/* Container styling */
+.register__form {
+    background-color: #f7f7f7; /* Light background color */
+    min-height: 100vh; /* Full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Form styling */
+.container {
+    background-color: #ffffff; /* White background for the form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+h2 {
+    color: #333; /* Dark text for the heading */
+}
+
+p {
+    color: #666; /* Lighter text color for the description */
+}
+
+input, button {
+    border: 1px solid #ddd; /* Default border color */
+    border-radius: 4px; /* Rounded corners for inputs and button */
+}
+
+/* Styling for inputs */
+input {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding is included in total width */
+}
+
+/* Border color for error inputs */
+input.border-red-500 {
+    border-color: #f56565; /* Red border for errors */
+}
+
+/* Button styling */
+button {
+    background-color: #007bff; /* Primary brand color */
+    color: #ffffff; /* White text */
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Success and error messages */
+.success-message, .error-message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.success-message {
+    color: #2d3748; /* Dark text for success */
+    border-color: #38a169; /* Green border for success */
+}
+
+.error-message {
+    color: #2d3748; /* Dark text for error */
+    border-color: #e53e3e; /* Red border for errors */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+p {
+    color: #333;
+    font-size: 14px;
+}

@@ -1,0 +1,71 @@
+.success-message {
+    color: green;
+    font-size: 1rem;
+    margin-top: 10px;
+    text-align: right;
+}
+
+.error-message {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+    text-align: right;
+}
+
+/* Ensure you have proper styling for the form container and inputs */
+.login__form {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f4f8;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Basic styling for form elements */
+input[type="email"],
+input[type="password"] {
+    background-color: #f8f8f8;
+}
+
+button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    color: #007bff;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-gray-500 {
+    color: #6c757d;
+}
+
+.text-brand {
+    color: #007bff;
+}
