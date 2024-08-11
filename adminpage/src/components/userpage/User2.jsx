@@ -1,250 +1,216 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
+import React, { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography, IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import axios from 'axios';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import './user2.css';
-import {
-  GridRowModes,
-  DataGrid,
-  GridToolbarContainer,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from '@mui/x-data-grid';
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from '@mui/x-data-grid-generator';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
+const UsersPage = () => {
+  const [users, setUsers] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentUser, setCurrentUser] = useState({ email: '', firstName: '', lastName: '', phone: '', role: '' });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
+  // Fetch users from backend
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/users');
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-const roles = ['AIML', 'CSE', 'AIDS'];
-const desi=['HOD', 'Faculty', 'Dean']
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
-const randomDesi = () => {
-  return randomArrayItem(desi);
-};
+  // Handle input change
+  const handleChange = (e) => {
+    setCurrentUser({ ...currentUser, [e.target.name]: e.target.value });
+  };
 
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    designation:randomDesi(),
-    password: "something",
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-    email:"adi@skct.edu.in",
-},
-{
-    id: randomId(),
-    name: randomTraderName(),
-    password: "iamadi@009",
-    designation:randomDesi(),
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-    email:"helio@skct.edu.in",
-},
-{
-    id: randomId(),
-    name: randomTraderName(),
-    password: "helloWorls$#@3",
-    designation:randomDesi(),
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-    email:"panda@skct.edu.in",
-},
-{
-    id: randomId(),
-    name: randomTraderName(),
-    password: "Nothing",
-    designation:randomDesi(),
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-    email:"pavi@skct.edu.in",
-},
-{
-    id: randomId(),
-    name: randomTraderName(),
-    password: "2asfdsf3",
-    designation:randomDesi(),
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-    email:"ram@skct.edu.in",
-},
-];
+  // Handle open dialog
+  const handleClickOpen = (user = null) => {
+    if (user) {
+      setEditMode(true);
+      setCurrentUser(user);
+    } else {
+      setEditMode(false);
+      setCurrentUser({ email: '', firstName: '', lastName: '', phone: '', role: '' });
+    }
+    setOpen(true);
+  };
 
-function EditToolbar(props) {
-    const { setRows, setRowModesModel } = props;
-    
-  const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: '', password: '', isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-    }));
+  // Handle close dialog
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // Handle form submit
+  const handleSubmit = async () => {
+    if (editMode) {
+      // Update user
+      try {
+        await axios.put(`http://localhost:8080/api/v1/users/${currentUser.id}`, currentUser);
+        fetchUsers();
+        handleClose();
+      } catch (error) {
+        console.error('Error updating user:', error);
+      }
+    } else {
+      // Add new user
+      try {
+        await axios.post('http://localhost:8080/api/v1/users', currentUser);
+        fetchUsers();
+        handleClose();
+      } catch (error) {
+        console.error('Error creating user:', error);
+      }
+    }
+  };
+
+  // Handle open confirmation dialog
+  const handleClickConfirmOpen = (user) => {
+    setUserToDelete(user);
+    setConfirmOpen(true);
+  };
+
+  // Handle close confirmation dialog
+  const handleConfirmClose = () => {
+    setConfirmOpen(false);
+    setUserToDelete(null);
+  };
+
+  // Handle confirm delete
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      try {
+        await axios.delete(`http://localhost:8080/api/v1/users/${userToDelete.id}`);
+        fetchUsers();
+        handleConfirmClose();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
   };
 
   return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom>
+        Users List
+      </Typography>
+      <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handleClickOpen()}>
+        Add User
       </Button>
-    </GridToolbarContainer>
-  );
-}
+      <TableContainer component={Paper} style={{ marginTop: 16 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>First Name</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.firstName}</TableCell>
+                <TableCell>{user.lastName}</TableCell>
+                <TableCell>{user.phone}</TableCell>
+                <TableCell>{user.role}</TableCell>
+                <TableCell>
+                  <IconButton color="primary" onClick={() => handleClickOpen(user)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton color="secondary" onClick={() => handleClickConfirmOpen(user)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-export default function User2() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>{editMode ? 'Edit User' : 'Add User'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Email"
+            name="email"
+            value={currentUser.email}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="First Name"
+            name="firstName"
+            value={currentUser.firstName}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Last Name"
+            name="lastName"
+            value={currentUser.lastName}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Phone"
+            name="phone"
+            value={currentUser.phone}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Role"
+            name="role"
+            value={currentUser.role}
+            onChange={handleChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            {editMode ? 'Update' : 'Add'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
-
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-
-  const columns = [
-    { field: 'name', headerName: 'Name', width: 180, editable: true },
-    {
-      field: 'password',
-      headerName: 'Password',
-      width: 180,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
-    },
-    
-    
-   
-    {
-      field: 'email',
-      headerName: 'Email',
-      width: 220,
-      editable: true,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      cellClassName: 'actions',
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: 'primary.main',
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
-    },
-  ];
-
-  return (
-    <div className='hello'>
-   
-  
-    <Box
-      sx={{
-        height: 500,
-        width: '100%',
-        '& .actions': {
-          color: 'text.secondary',
-        },
-        '& .textPrimary': {
-          color: 'text.primary',
-        },
-      }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-      />
+      <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this user?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
-    </div>
   );
-}
+};
+
+export default UsersPage;
