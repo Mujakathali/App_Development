@@ -1,13 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Chip, Box, Typography, TableContainer } from '@mui/material';
-
-const activities = [
-  { name: 'John Doe', status: 'Booked', venue: 'Avana 3', date: '13 March 2023', time: '09:00-12:00' },
-  { name: 'Jane Smith', status: 'Booked', venue: 'Avana 2', date: '14 March 2023', time: '12:00-15:00' },
-  { name: 'Mike Johnson', status: 'Canceled', venue: 'Avana 1', date: '15 March 2023', time: '15:00-18:00' },
-  { name: 'Emily Davis', status: 'Booked', venue: 'Avana 4', date: '16 March 2023', time: '18:00-21:00' },
-  { name: 'David Wilson', status: 'Canceled', venue: 'Avana 5', date: '17 March 2023', time: '21:00-00:00' },
-];
+import axios from 'axios';
 
 const getStatusChip = (status) => {
   switch (status) {
@@ -21,10 +14,31 @@ const getStatusChip = (status) => {
 };
 
 const ActivityTable = () => {
+  const [activities, setActivities] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/v1/bookings');
+        setActivities(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to fetch data');
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
   return (
-    <TableContainer component={Paper} sx={{ mt: 3 }}>
+    <TableContainer 
+      component={Paper} 
+      sx={{ mt: 3, maxHeight: '400px', overflowY: 'auto' }} // Set maxHeight and overflow
+    >
       <Box p={2}>
         <Typography variant="h6">Status</Typography>
+        {error && <Typography color="error">{error}</Typography>}
       </Box>
       <Table>
         <TableHead>
@@ -37,15 +51,21 @@ const ActivityTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {activities.map((activity, index) => (
-            <TableRow key={index}>
-              <TableCell>{activity.name}</TableCell>
-              <TableCell>{getStatusChip(activity.status)}</TableCell>
-              <TableCell>{activity.venue}</TableCell>
-              <TableCell>{activity.date}</TableCell>
-              <TableCell>{activity.time}</TableCell>
+          {activities.length > 0 ? (
+            activities.map((activity) => (
+              <TableRow key={activity.id}>
+                <TableCell>{activity.name}</TableCell>
+                <TableCell>{getStatusChip(activity.status)}</TableCell>
+                <TableCell>{activity.venue}</TableCell>
+                <TableCell>{activity.date}</TableCell>
+                <TableCell>{activity.time}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No activities found</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </TableContainer>
